@@ -1,0 +1,51 @@
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.isWord = False
+
+    def addWord(self, word:str):
+        cur = self
+        for i in range(len(word)):
+            if word[i] not in cur.children:
+                cur.children[word[i]] = TrieNode()
+            cur = cur.children[word[i]]
+        cur.isWord = True
+
+
+class Solution:
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        self.root = TrieNode()
+        visit = set()
+        res = set()
+        rows, cols = len(board), len(board[0])
+        for w in words:
+            self.root.addWord(w)
+
+        def dfs(r, c, node, i):
+            if (r < 0 or c < 0 or r >= rows or c >= cols or (r,c) in visit or board[r][c] not in node.children):
+                return 
+
+            visit.add((r, c))
+
+            i += board[r][c]
+            node = node.children[board[r][c]]
+            if node.isWord:
+                res.add(i)
+            
+            
+            dfs(r + 1, c, node, i)
+            dfs(r - 1, c, node, i)
+            dfs(r, c + 1, node, i)
+            dfs(r, c - 1, node, i)
+
+            visit.remove((r, c))
+
+
+        for r in range(rows):
+            for c in range(cols):
+                dfs(r, c, self.root, "")
+        return list(res)
+
+
+
+        
